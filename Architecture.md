@@ -1,3 +1,6 @@
+# OrbitWatch Architecture
+
+```mermaid
 flowchart TB
 
 %% External inputs
@@ -76,3 +79,4 @@ SLAREG --> ATTEST
 ATTEST --> DISPUTE
 DISPUTE --> BOND
 BOND --> TREASURY
+```
