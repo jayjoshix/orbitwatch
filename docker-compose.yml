@@ -1,0 +1,76 @@
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: orbitwatch
+      POSTGRES_PASSWORD: orbitwatch
+      POSTGRES_DB: orbitwatch
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orbitwatch"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  ipfs:
+    image: ipfs/kubo:latest
+    ports:
+      - "5001:5001"
+      - "8080:8080"
+    volumes:
+      - ipfsdata:/data/ipfs
+    healthcheck:
+      test: ["CMD", "ipfs", "id"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  core:
+    build:
+      context: .
+      dockerfile: packages/core/Dockerfile
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://orbitwatch:orbitwatch@postgres:5432/orbitwatch
+      IPFS_API_URL: http://ipfs:5001
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ipfs:
+        condition: service_healthy
+    restart: unless-stopped
+
+  alerts:
+    build:
+      context: .
+      dockerfile: packages/alerts/Dockerfile
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://orbitwatch:orbitwatch@postgres:5432/orbitwatch
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: packages/api/Dockerfile
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://orbitwatch:orbitwatch@postgres:5432/orbitwatch
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  ipfsdata:

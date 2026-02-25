@@ -1,0 +1,20 @@
+{
+    "name": "@orbitwatch/recompute",
+    "version": "0.1.0",
+    "private": true,
+    "main": "dist/index.js",
+    "bin": {
+        "recompute": "dist/index.js"
+    },
+    "scripts": {
+        "build": "tsc",
+        "start": "node dist/index.js"
+    },
+    "dependencies": {
+        "@orbitwatch/shared": "workspace:*",
+        "ethers": "^6.9.2"
+    },
+    "devDependencies": {
+        "typescript": "^5.3.3"
+    }
+}

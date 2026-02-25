@@ -1,0 +1,17 @@
+{
+    "name": "@orbitwatch/api",
+    "version": "0.1.0",
+    "private": true,
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "tsc",
+        "start": "node dist/index.js"
+    },
+    "dependencies": {
+        "@orbitwatch/shared": "workspace:*",
+        "fastify": "^4.25.2"
+    },
+    "devDependencies": {
+        "typescript": "^5.3.3"
+    }
+}

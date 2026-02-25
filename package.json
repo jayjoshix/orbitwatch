@@ -1,0 +1,11 @@
+{
+  "name": "orbitwatch-demo",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r run build",
+    "recompute": "node packages/recompute/dist/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
