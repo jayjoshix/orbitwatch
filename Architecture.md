@@ -1,6 +1,6 @@
 flowchart TB
 
-%% ============== External inputs ==============
+%% External inputs
 subgraph INPUTS[Inputs]
   DAS[DAS endpoints<br/>(AnyTrust)]
   PARENT[Parent chain RPC<br/>(SequencerInbox)]
@@ -10,7 +10,7 @@ end
 
 CFG[Config/Route Store<br/>(Postgres)]
 
-%% ============== OrbitWatch Core ==============
+%% OrbitWatch Core
 subgraph CORE[OrbitWatch Core]
   PI[Probers + Indexer<br/>(RPC poll + eth_getLogs)]
   RE[Rule Evaluator<br/>(thresholds/invariants)]
@@ -19,18 +19,18 @@ subgraph CORE[OrbitWatch Core]
   ESTORE[(Evidence Store<br/>IPFS/object)]
 end
 
-%% ============== Backend + consumers ==============
+%% Backend + consumers
 subgraph APP[Backend + Consumers]
   SOLVER[Solver/Executor<br/>(queries Route Health API)]
   API[Backend API<br/>(Route Health + Alerts)]
   ALERTS[Alert Channels<br/>(Telegram/Discord)]
 end
 
-%% ============== Attestation submission ==============
+%% Attestation submission
 SUB[Attestation Submitter<br/>(policy + dedupe + retries)]
 RELAYER[OZ Defender Relayer<br/>(sign + nonce + gas + resubmit)]
 
-%% ============== Optional SLA route ==============
+%% Optional SLA route
 subgraph SLA[Optional Route (testnet-first)]
   SLAREG[SLA Registry<br/>(routeId, profiles, window)]
   ATTEST[Attestation Contract<br/>(routeId, windowId,<br/>score, evidenceHash/CID)]
@@ -39,7 +39,7 @@ subgraph SLA[Optional Route (testnet-first)]
   TREASURY[Treasury/Rewards]
 end
 
-%% ============== Wiring: inputs/config -> core ==============
+%% Wiring: inputs/config -> core
 DAS --> PI
 PARENT --> PI
 ORBIT --> PI
@@ -50,33 +50,28 @@ CFG --> RE
 CFG --> RMB
 CFG --> SLAREG
 
-%% ============== Core internal flow ==============
+%% Core internal flow
 PI --> RE
 PI --> RMB
-
 RE --> EBB
 RMB --> API
 EBB --> ESTORE
-
-%% Evidence pointer back into API (for incident display)
 ESTORE --> API
 
-%% ============== Rule triggers / alerting flow ==============
+%% Rule triggers / alerting flow
 RE -.->|rule triggers| API
 API --> ALERTS
 
-%% ============== Solver queries ==============
+%% Solver queries
 SOLVER --> API
 
-%% ============== Attestation flow ==============
+%% Attestation flow
 API --> SUB
 SUB --> RELAYER
 RELAYER --> ATTEST
-
-%% Evidence pointer into onchain path (conceptual)
 ESTORE -.->|evidenceHash/CID pointer| ATTEST
 
-%% ============== Optional SLA contract relationships ==============
+%% Optional SLA contract relationships
 SLAREG --> ATTEST
 ATTEST --> DISPUTE
 DISPUTE --> BOND
