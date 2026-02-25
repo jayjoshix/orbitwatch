@@ -5,41 +5,41 @@ flowchart TB
 
 %% External inputs
 subgraph INPUTS[Inputs]
-  DAS[DAS endpoints<br/>(AnyTrust)]
-  PARENT[Parent chain RPC<br/>(SequencerInbox)]
-  ORBIT[Orbit RPCs<br/>(XAI, RARI, +N)]
-  ARB1[Arbitrum One RPC]
+  DAS["DAS endpoints (AnyTrust)"]
+  PARENT["Parent chain RPC (SequencerInbox)"]
+  ORBIT["Orbit RPCs (XAI, RARI, +N)"]
+  ARB1["Arbitrum One RPC"]
 end
 
-CFG[Config/Route Store<br/>(Postgres)]
+CFG["Config/Route Store (Postgres)"]
 
 %% OrbitWatch Core
 subgraph CORE[OrbitWatch Core]
-  PI[Probers + Indexer<br/>(RPC poll + eth_getLogs)]
-  RE[Rule Evaluator<br/>(thresholds/invariants)]
-  RMB[Route Metrics Builder<br/>(latency/error windows)]
-  EBB[Evidence Bundle Builder<br/>(block range + logs + RPC calls)]
-  ESTORE[(Evidence Store<br/>IPFS/object)]
+  PI["Probers + Indexer (RPC poll + eth_getLogs)"]
+  RE["Rule Evaluator (thresholds/invariants)"]
+  RMB["Route Metrics Builder (latency/error windows)"]
+  EBB["Evidence Bundle Builder (block range + logs + RPC calls)"]
+  ESTORE[("Evidence Store (IPFS/object)")]
 end
 
 %% Backend + consumers
 subgraph APP[Backend + Consumers]
-  SOLVER[Solver/Executor<br/>(queries Route Health API)]
-  API[Backend API<br/>(Route Health + Alerts)]
-  ALERTS[Alert Channels<br/>(Telegram/Discord)]
+  SOLVER["Solver/Executor (queries Route Health API)"]
+  API["Backend API (Route Health + Alerts)"]
+  ALERTS["Alert Channels (Telegram/Discord)"]
 end
 
 %% Attestation submission
-SUB[Attestation Submitter<br/>(policy + dedupe + retries)]
-RELAYER[OZ Defender Relayer<br/>(sign + nonce + gas + resubmit)]
+SUB["Attestation Submitter (policy + dedupe + retries)"]
+RELAYER["OZ Defender Relayer (sign + nonce + gas + resubmit)"]
 
 %% Optional SLA route
-subgraph SLA[Optional Route (testnet-first)]
-  SLAREG[SLA Registry<br/>(routeId, profiles, window)]
-  ATTEST[Attestation Contract<br/>(routeId, windowId,<br/>score, evidenceHash/CID)]
-  DISPUTE[Dispute Module<br/>(challenge window)]
-  BOND[Bond Vault<br/>(escrow/slash)]
-  TREASURY[Treasury/Rewards]
+subgraph SLA[Optional Route - testnet-first]
+  SLAREG["SLA Registry (routeId, profiles, window)"]
+  ATTEST["Attestation Contract (routeId, windowId, score, evidenceHash/CID)"]
+  DISPUTE["Dispute Module (challenge window)"]
+  BOND["Bond Vault (escrow/slash)"]
+  TREASURY["Treasury/Rewards"]
 end
 
 %% Wiring: inputs/config -> core
