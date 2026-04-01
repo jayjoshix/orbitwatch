@@ -1,5 +1,6 @@
 export interface Config {
     parentRpcUrl: string;
+    xaiRpcUrl: string;
     xaiSequencerInbox: string;
     confirmations: number;
     thresholdSecs: number;
@@ -16,6 +17,7 @@ export interface Config {
 export function loadConfig(): Config {
     return {
         parentRpcUrl: process.env.PARENT_RPC_URL || 'https://arb1.arbitrum.io/rpc',
+        xaiRpcUrl: process.env.XAI_RPC_URL || 'https://xai-chain.net/rpc',
         xaiSequencerInbox: process.env.XAI_SEQUENCER_INBOX || '0x995a9d3ca121d48d21087ede20bc8acb2398c8b1',
         confirmations: parseInt(process.env.CONFIRMATIONS || '6', 10),
         thresholdSecs: parseInt(

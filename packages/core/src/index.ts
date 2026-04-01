@@ -1,6 +1,7 @@
 import { loadConfig, getPool } from '@orbitwatch/shared';
 import { runIndexer } from './indexer';
 import { evaluateRule } from './rule';
+import { evaluateLivenessRule } from './liveness';
 
 async function main() {
     const config = loadConfig();
@@ -8,6 +9,7 @@ async function main() {
     console.log(`[core] Parent RPC: ${config.parentRpcUrl}`);
     console.log(`[core] SequencerInbox: ${config.xaiSequencerInbox}`);
     console.log(`[core] Threshold: ${config.thresholdSecs}s`);
+    console.log(`[core] L2 RPC: ${config.xaiRpcUrl}`);
     console.log(`[core] Poll interval: ${config.pollSecs}s`);
 
     // Initialize DB pool
@@ -19,6 +21,7 @@ async function main() {
             console.log(`\n[core] === Tick at ${new Date().toISOString()} ===`);
             const { fromBlock, toBlock } = await runIndexer(config);
             await evaluateRule(config, fromBlock, toBlock);
+            await evaluateLivenessRule(config);
         } catch (err) {
             console.error('[core] Tick error:', err);
         }
